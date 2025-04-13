@@ -11,7 +11,7 @@ docker run -d \
   --name=unbound \
   --restart=unless-stopped \
   -p 5335:5335/tcp \
-  -p 5335:533553/udp \
+  -p 5335:5335/udp \
   ghcr.io/d1ceward/unbound-for-pihole
 ```
 
