@@ -1,4 +1,4 @@
-name: Update Dockerfile for new Alpine versions
+name: Update Dockerfile
 on:
   schedule:
     - cron: '0 10 * * *'
@@ -22,17 +22,16 @@ jobs:
           sed -i "s|FROM alpine:[0-9.]*|FROM alpine:${{ steps.alpine.outputs.latest }}|" Dockerfile
       - name: Check for changes
         id: changes
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git diff --quiet || echo "changed=true" >> $GITHUB_OUTPUT
+        run: git diff --quiet || echo "changed=true" >> $GITHUB_OUTPUT
       - name: Create Pull Request
         if: steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           commit-message: Update Dockerfile for new Alpine version
           title: Update Dockerfile for new Alpine version
           body: Automated update of Dockerfile to latest Alpine versions.
+          base: develop
           branch: auto/update-dockerfile-alpine-${{ steps.alpine.outputs.latest }}
           assignees: d1ceward
           labels: 'type: dependencies'
