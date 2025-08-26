@@ -27,6 +27,7 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Update Dockerfile for new Alpine version
           title: Update Dockerfile for new Alpine version
           body: Automated update of Dockerfile to latest Alpine versions.
