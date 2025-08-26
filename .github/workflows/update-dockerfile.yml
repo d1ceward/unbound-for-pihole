@@ -27,9 +27,10 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
-          commit-message: "Update Dockerfile for new Alpine version"
-          title: "Update Dockerfile for new Alpine version"
-          body: "Automated update of Dockerfile to latest Alpine versions."
-          branch: "auto/update-dockerfile-alpine-${{ steps.alpine.outputs.latest }}"
+          commit-message: Update Dockerfile for new Alpine version
+          title: Update Dockerfile for new Alpine version
+          body: Automated update of Dockerfile to latest Alpine versions.
+          base: develop
+          branch: auto/update-dockerfile-alpine-${{ steps.alpine.outputs.latest }}
           assignees: d1ceward
           labels: 'type: dependencies'
