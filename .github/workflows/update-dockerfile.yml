@@ -27,7 +27,6 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
-          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           commit-message: Update Dockerfile for new Alpine version
           title: Update Dockerfile for new Alpine version
           body: Automated update of Dockerfile to latest Alpine versions.
