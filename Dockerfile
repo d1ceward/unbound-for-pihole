@@ -10,6 +10,9 @@ RUN apk --no-cache add unbound drill
 # Get the root hints file
 RUN wget -S https://www.internic.net/domain/named.cache -O /etc/unbound/root.hints
 
+# Fetch the DNSSEC root trust anchor
+RUN unbound-anchor -a "/etc/unbound/root.key"
+
 # Copy the unbound configuration file
 COPY unbound.conf /etc/unbound/unbound.conf
 
