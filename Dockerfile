@@ -5,13 +5,13 @@ LABEL org.opencontainers.image.source="https://github.com/d1ceward/unbound-for-p
 LABEL org.opencontainers.image.description="A lightweight Docker image for running Unbound as a recursive DNS resolver — the perfect upstream DNS server for Pi-hole."
 LABEL org.opencontainers.image.licenses="MIT"
 
-RUN apk --no-cache add unbound unbound-anchor ca-certificates drill
+RUN apk --no-cache add unbound ca-certificates drill
 
 # Get the root hints file
 RUN wget -S https://www.internic.net/domain/named.cache -O /etc/unbound/root.hints
 
 # Fetch the DNSSEC root trust anchor
-RUN unbound-anchor -a "/etc/unbound/root.key"
+RUN unbound-anchor -a "/etc/unbound/root.key" > /dev/null 2>&1 || true
 
 # Copy the unbound configuration file
 COPY unbound.conf /etc/unbound/unbound.conf
