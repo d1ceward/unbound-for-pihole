@@ -8,7 +8,8 @@ LABEL org.opencontainers.image.licenses="MIT"
 RUN apk --no-cache add unbound drill
 
 # Get the root hints file
-RUN wget -S https://www.internic.net/domain/named.cache -O /etc/unbound/root.hints
+RUN mkdir -p /var/lib/unbound && \
+    wget -S https://www.internic.net/domain/named.cache -O /var/lib/unbound/root.hints
 
 # Copy the unbound configuration file
 COPY unbound.conf /etc/unbound/unbound.conf
