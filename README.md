@@ -1,6 +1,6 @@
 # unbound-for-pihole 🛡️🚀
 
-A lightweight Docker image for running [Unbound](https://nlnetlabs.nl/projects/unbound/about/) as a recursive DNS resolver — the perfect upstream DNS server for [Pi-hole](https://pi-hole.net/).
+A lightweight Docker image for running [Unbound](https://nlnetlabs.nl/projects/unbound/about/) as a recursive DNS resolver, the perfect upstream DNS server for [Pi-hole](https://pi-hole.net/).
 
 ## Features
 
