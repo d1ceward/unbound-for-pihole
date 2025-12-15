@@ -25,7 +25,7 @@ jobs:
         run: git diff --quiet || echo "changed=true" >> $GITHUB_OUTPUT
       - name: Create Pull Request
         if: steps.changes.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: Update Dockerfile for new Alpine version
           title: Update Dockerfile for new Alpine version
