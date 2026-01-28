@@ -1,4 +1,4 @@
-FROM alpine:3.23.2
+FROM alpine:3.23.3
 
 LABEL maintainer="d1ceward <github.com/d1ceward>"
 LABEL org.opencontainers.image.source="https://github.com/d1ceward/unbound-for-pihole"
