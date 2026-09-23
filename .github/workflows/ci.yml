@@ -1,0 +1,70 @@
+---
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+      - develop
+      - master
+jobs:
+  test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+      - name: Build image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: unbound-for-pihole:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Validate unbound configuration
+        run: docker run --rm unbound-for-pihole:ci unbound-checkconf /etc/unbound/unbound.conf
+      - name: Start container
+        run: docker run -d --name unbound-ci unbound-for-pihole:ci
+      - name: Wait for healthcheck
+        run: |
+          for i in $(seq 1 30); do
+            status=$(docker inspect --format='{{.State.Health.Status}}' unbound-ci)
+            if [ "$status" = "healthy" ]; then echo "container healthy"; exit 0; fi
+            if [ "$status" = "unhealthy" ]; then break; fi
+            sleep 2
+          done
+          echo "container did not become healthy"
+          docker logs unbound-ci
+          exit 1
+      - name: Resolve a name
+        run: docker exec unbound-ci drill -p 5335 cloudflare.com @127.0.0.1
+      - name: Check DNSSEC validation
+        run: |
+          # A signed zone must come back with the ad (authenticated data) flag
+          docker exec unbound-ci drill -p 5335 -D internetsociety.org @127.0.0.1 \
+            | grep -qE '^;; flags:.* ad' || { echo "DNSSEC validation not working"; exit 1; }
+      - name: Show logs
+        if: always()
+        run: docker logs unbound-ci || true
+  platforms:
+    name: Build all platforms
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
+      - name: Build every published platform
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          push: false
