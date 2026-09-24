@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# Cut a new release: bump VERSION on develop, fast-forward master, tag it and
-# publish a GitHub release. Pushing the tag triggers the Build workflow, which
-# publishes the image to ghcr.io.
+# Cut a new release: bump VERSION on develop, fast-forward master and tag it.
+# Pushing the tag triggers the Build workflow, which publishes the image to
+# ghcr.io. The GitHub release itself is written by hand afterwards.
 #
 # Usage: scripts/release.sh [-n|--dry-run] <major|minor|patch|X.Y.Z>
 
@@ -41,7 +41,6 @@ for arg in "$@"; do
 done
 [ -n "$bump" ] || usage
 
-command -v gh >/dev/null || die "gh CLI is required"
 cd "$(git rev-parse --show-toplevel)"
 
 # Sanity checks on the working tree and branches
@@ -103,6 +102,5 @@ run git fetch --quiet "$REMOTE" "$MAIN_BRANCH:$MAIN_BRANCH"
 run git tag -a "$tag" -m "$title"
 run git push "$REMOTE" "$tag"
 
-run gh release create "$tag" --title "$title" --generate-notes --verify-tag
-
-echo "Done: $tag released, the Build workflow will publish the image."
+echo "Done: $tag pushed, the Build workflow will publish the image."
+echo "Write the GitHub release by hand for $tag."
